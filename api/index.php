@@ -1,5 +1,5 @@
 <?php
-header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Origin: *; Content-type: application/json; charset=utf-8");
 $xffaddrs = explode(',',$_SERVER['HTTP_X_FORWARDED_FOR']);
 $_SERVER['REMOTE_ADDR'] = $xffaddrs[0];
 $endpoint = 'https://unlockcontent.net/api/v2';
@@ -23,6 +23,5 @@ $result = curl_exec($ch);
 curl_close($ch);
 $result = json_decode($result);
 $offers = $result->offers;
-header("Content-type: application/json; charset=utf-8");
 echo json_encode($offers);
 ?>
