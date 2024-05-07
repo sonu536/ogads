@@ -1,3 +1,5 @@
 <?php
-echo $_SERVER['QUERY_STRING'];
-?>
+
+if(isset($_GET["title"])) {
+  echo htmlspecialchars($_GET["title"]);
+};
