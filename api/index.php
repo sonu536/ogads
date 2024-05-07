@@ -21,4 +21,13 @@ $result = json_decode($result);
 $offers = $result->offers;
 header("Content-type: application/json; charset=utf-8");
 echo json_encode($offers);
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+var queryString = new URL(window.location).search;
+document.querySelectorAll("[href]").forEach(link => {
+    var current = link.href;
+    const queryStrToUse = queryString.replace('?', '&')
+    link.href = current + queryStrToUse;
+});
+</script>
 ?>
