@@ -6,7 +6,9 @@ $endpoint = 'https://unlockcontent.net/api/v2';
     if(isset($_GET["aff_sub4"])) {
      $aff_sub4 = htmlspecialchars($_GET["aff_sub4"]);
 };
+$ctype= 3;
 $data = [
+    'ctype' => $ctype,
     'aff_sub4' => $aff_sub4,
     'ip' => $_SERVER['REMOTE_ADDR'], // Client IP (REQUIRED)
     'user_agent' => $_SERVER['HTTP_USER_AGENT'], // Client User Agent (REQUIRED)
