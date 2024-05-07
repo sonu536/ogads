@@ -3,10 +3,11 @@ header('Access-Control-Allow-Origin: *');
 $xffaddrs = explode(',',$_SERVER['HTTP_X_FORWARDED_FOR']);
 $_SERVER['REMOTE_ADDR'] = $xffaddrs[0];
 $endpoint = 'https://unlockcontent.net/api/v2';
-$data = [
     if(isset($_GET["aff_sub4"])) {
-     'aff_sub4' => htmlspecialchars($_GET["aff_sub4"]);
+     $aff_sub4 = htmlspecialchars($_GET["aff_sub4"]);
 };
+$data = [
+    'aff_sub4' => $aff_sub4,
     'ip' => $_SERVER['REMOTE_ADDR'], // Client IP (REQUIRED)
     'user_agent' => $_SERVER['HTTP_USER_AGENT'], // Client User Agent (REQUIRED)
     // Enter other optional vars here (ctype, max, etc)
