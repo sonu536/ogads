@@ -6,7 +6,7 @@ $endpoint = 'https://unlockcontent.net/api/v2';
     if(isset($_GET["aff_sub4"])) {
      $aff_sub4 = htmlspecialchars($_GET["aff_sub4"]);
 };
-$ctype= '3';
+$ctype= '1';
 $data = [
     'ctype' => $ctype,
     'aff_sub4' => $aff_sub4,
