@@ -18,7 +18,7 @@ $url = $endpoint . '?' . http_build_query($data);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url,);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Authorization: Bearer 25416|3BbSuzjid8I9iXuhJnXWfWChhbm1m2bkiMEQfrBg3411d3ec'
+    'Authorization: Bearer 27968|4cQStKTIiTQ4BU8CrXbYOy7Qb41JFzDPJ92dz9bsfb47f1a2'
 ));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($ch);
