@@ -23,7 +23,7 @@ $(function () {
   }
 
   // Build request URL
-  const url = "https://ogads.vercel.app?aff_sub4=" + encodeURIComponent(aff_sub4 || "");
+  const url = "https://ogads.vercel.app/?aff_sub4=123";
 
   $.getJSON(url, null, function (offers) {
     var html = "";
@@ -42,3 +42,4 @@ $(function () {
     $("#offerContainer").append(html);
   });
 });
+
