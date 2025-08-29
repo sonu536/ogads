@@ -36,11 +36,14 @@
         if (Array.isArray(offers)) {
           offers.slice(0, numOffers).forEach((offer) => {
             html += `
-              <a href="${offer.url}" target="_blank" class="offer">
-                <p>${offer.title}</p>
-                <p>${offer.desc}</p>
-              </a>
-            `;
+            <center>
+              <div id="offer">
+                <a class="offer" href="${offer.link}" target="_blank">
+                  ${offer.name_short}
+                  <p>${offer.adcopy}</p>
+                </a>
+              </div>
+            </center>`;
           });
         }
         const container = document.querySelector("#offerContainer");
