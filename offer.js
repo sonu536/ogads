@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     { countries: ["US", "CA", "FR", "AU", "DE", "GB", "NL", "IT", "CH"], minPayout: 0.45 },
     { countries: ["MY","TR","ZA","PL","NO","JP","HK"], minPayout: 0.20 }
   ];
-  const defaultMinPayout = 0.07;
+  const defaultMinPayout = 0.05;
   let urlString = window.location.href;
   let url1 = new URL(urlString);
   let aff_sub4 = url1.searchParams.get('aff_sub4');
