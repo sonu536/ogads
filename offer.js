@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const payoutGroups = [
-    { countries: ["US", "CA", "FR", "AU", "DE", "GB", "NL", "IT", "CH"], minPayout: 0.45 },
-    { countries: ["MY","TR","ZA","PL","NO","JP","HK"], minPayout: 0.20 }
+    { countries: ["US", "CA", "FR", "AU", "DE", "GB", "IT"], minPayout: 0.80 },
+    { countries: ["PL", "NO", "JP", "IE", "FI", "SE", "ES", "BE", "DK", "NL", "CH", "AT", "RO"], minPayout: 0.50 },
+    { countries: ["MY", "TR", "ZA", "HK"], minPayout: 0.20 }
   ];
   const defaultMinPayout = 0.05;
   let urlString = window.location.href;
