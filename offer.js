@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const payoutGroups = [
-    { countries: ["US", "CA", "FR", "AU", "DE", "GB", "IT"], minPayout: 0.80 },
-    { countries: ["PL", "NO", "JP", "IE", "FI", "SE", "ES", "BE", "DK", "NL", "CH", "AT", "RO"], minPayout: 0.50 },
+    { countries: ["US", "CA", "FR", "AU", "DE", "GB", "IT"], minPayout: 0.60 },
+    { countries: ["PL", "NO", "JP", "IE", "FI", "SE", "ES", "BE", "DK", "NL", "CH", "AT", "RO"], minPayout: 0.40 },
     { countries: ["MY", "TR", "ZA", "HK"], minPayout: 0.20 }
   ];
   const defaultMinPayout = 0.05;
