@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return passesGroups;
       });
       let html = '';
-      let numOffers = 5; // Limit max offers
+      let numOffers = 3; // Limit max offers
       offers = offers.slice(0, numOffers);
 
       offers.forEach(function (offer) {
