@@ -1,35 +1,36 @@
 <?php
-// Fix 1: Define $aff_sub4 BEFORE any output
-$aff_sub4 = isset($_GET["aff_sub4"]) ? htmlspecialchars($_GET["aff_sub4"]) : '';
 
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header("Content-type: application/json; charset=utf-8");
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: *');
+header('Content-Type: application/json; charset=utf-8');
 
-$xffaddrs = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-$_SERVER['REMOTE_ADDR'] = $xffaddrs[0];
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 
 $endpoint = 'https://unlockcontent.net/api/v2';
-$ctype = '7';
+
+$aff_sub4 = $_GET['aff_sub4'] ?? '';
+
 $data = [
-  'ctype' => $ctype,
-  'aff_sub4' => $aff_sub4,
-  'ip' => $_SERVER['REMOTE_ADDR'],
-  'user_agent' => $_SERVER['HTTP_USER_AGENT']
+    'ctype'      => '7',
+    'aff_sub4'   => $aff_sub4,
+    'ip'         => $_SERVER['REMOTE_ADDR'] ?? '',
+    'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
 ];
 
 $url = $endpoint . '?' . http_build_query($data);
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-  'Authorization: Bearer 27968|4cQStKTIiTQ4BU8CrXbYOy7Qb41JFzDPJ92dz9bsfb47f1a2'
-));
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer 27968|4cQStKTIiTQ4BU8CrXbYOy7Qb41JFzDPJ92dz9bsfb47f1a2'
+]);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$result = curl_exec($ch);
+
+$response = curl_exec($ch);
 curl_close($ch);
 
-$result = json_decode($result);
-$offers = $result->offers;
-echo json_encode($offers);
-?>
+$json = json_decode($response, true);
+echo json_encode($json['offers'] ?? []);
