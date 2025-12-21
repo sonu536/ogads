@@ -1,41 +1,47 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const payoutGroups = [
-    { countries: ["US", "CA", "FR", "AU", "DE", "GB", "IT"], minPayout: 0.60 },
-    { countries: ["PL", "NO", "JP", "IE", "FI", "SE", "ES", "BE", "DK", "NL", "CH", "AT", "RO"], minPayout: 0.40 },
-    { countries: ["MY", "TR", "ZA", "HK"], minPayout: 0.20 }
-  ];
-  const defaultMinPayout = 0.05;
-  let urlString = window.location.href;
-  let url1 = new URL(urlString);
-  let aff_sub4 = url1.searchParams.get('aff_sub4');
-  let url = 'https://ogads.vercel.app' + '?aff_sub4=' + aff_sub4;
-  fetch(url)
-    .then(response => response.json())
-    .then(offers => {
-      offers = offers.filter(function (offer) {
-        let offerCountries = offer.country.split(',').map(c => c.trim());
-        let payout = parseFloat(offer.payout);
-        let inAnyGroup = false;
-        let passesGroups = payoutGroups.every(function (group) {
-          const inGroup = group.countries.some(c => offerCountries.includes(c));
-          if (inGroup) {
-            inAnyGroup = true;
-            return payout >= group.minPayout;
-          }
-          return true;
-        });
-        if (!inAnyGroup) {
-          return payout >= defaultMinPayout;
-        }
-        return passesGroups;
-      });
-      let html = '';
-      let numOffers = 3; // Limit max offers
-      offers = offers.slice(0, numOffers);
+import $ from 'jquery';
+$('.element').hide();
+$(function() {
+    let url_string = window.location.href;
+    let url1 = new URL(url_string);
+    let aff_sub4 = url1.searchParams.get('aff_sub4');
+    var url = 'https://ogads.vercel.app' + '?aff_sub4=' + aff_sub4;
+    const tierSettings = {
+        tier1: { countries: ["US", "CA", "FR", "AU", "DE", "GB", "NL", "IT"], min: 0.45 },
+        tier2: { countries: ["MY", "TR", "ZA", "PL", "NO", "JP", "HK"], min: 0.20 },
+        tier3: { countries: ["BR", "MX", "ES", "PT"], min: 0.10 }
+    };
+    const defaultMin = 0.05;
+    const numOffers = 3; 
+    // --- CONFIGURATION END ---
+    $.getJSON(url, null, function(offers) {
+        var html = ''; 
+        // 1. Filter the offers based on payout logic
+        let filteredOffers = offers.filter(offer => {
+            let country = offer.country;
+            let payout = parseFloat(offer.payout);
+            
+            // Default payout requirement
+            let requiredPayout = defaultMin;
 
-      offers.forEach(function (offer) {
-        html += '<center><div id="offer">'+'<a class="offer" href="'+ offer.link +'" target="_blank">'+offer.name_short+'<p>'+ offer.adcopy+'</p>'+'</a>'+'</div></center>';
-      });
-      document.querySelector("#offerContainer").insertAdjacentHTML("beforeend", html);
-    })
+            // Loop through tiers to find a match
+            for (const tier in tierSettings) {
+                if (tierSettings[tier].countries.includes(country)) {
+                    requiredPayout = tierSettings[tier].min;
+                    break; // Stop looking once we find the matching tier
+                }
+            }
+
+            return payout >= requiredPayout;
+        });
+
+        // 2. Limit the number of offers
+        filteredOffers = filteredOffers.slice(0, numOffers);
+
+        // 3. Build the HTML
+        $.each(filteredOffers, function(key, offer) {
+            html += '<center><div id="offer"><a class="offer" href="'+offer.link+'" target="_blank">'+offer.name_short+'<p>'+offer.adcopy+'</p></a></div></center>';
+        });
+
+        $("#offerContainer").append(html);
+    });
 });
