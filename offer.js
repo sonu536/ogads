@@ -1,5 +1,3 @@
-import $ from 'jquery';
-$('.element').hide();
 $(function() {
     let url_string = window.location.href;
     let url1 = new URL(url_string);
