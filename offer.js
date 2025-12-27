@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         tier3: { countries: ["PH", "ID", "VN", "NG", "KE", "GH", "EG", "BR", "MX"], min: 0.15 }
     };
     const defaultMin = 0.08;
-    const numOffers = 3; 
+    const numOffers = 5; 
     // Use Fetch API instead of $.getJSON
     fetch(url)
         .then(response => response.json())
