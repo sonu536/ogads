@@ -1,38 +1,41 @@
 <?php
-// Define variables FIRST - no warnings
-$aff_sub4 = isset($_GET["aff_sub4"]) ? htmlspecialchars($_GET["aff_sub4"]) : '';
-error_reporting(0); // Suppress warnings completely
-
-// Headers FIRST
+// 1. Headers (Must be at the very top)
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header("Content-type: application/json; charset=utf-8");
+header('Content-Type: application/json; charset=utf-8');
 
-$xffaddrs = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-$_SERVER['REMOTE_ADDR'] = $xffaddrs[0];
+error_reporting(0);
 
+// 2. Identify the Real User IP
+$user_ip = $_SERVER['REMOTE_ADDR'];
+if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $addr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+    $user_ip = trim($addr[0]);
+}
+
+// 3. Prepare Data
+$aff_sub4 = isset($_GET["aff_sub4"]) ? htmlspecialchars($_GET["aff_sub4"]) : '';
 $endpoint = 'https://unlockcontent.net/api/v2';
-$ctype = '7';
-$data = [
-  'ctype' => $ctype,
-  'aff_sub4' => $aff_sub4,
-  'ip' => $_SERVER['REMOTE_ADDR'],
-  'user_agent' => $_SERVER['HTTP_USER_AGENT'] // PASS REAL UA - gets correct mobile/desktop offers
+
+$params = [
+    'ctype'      => '7',
+    'aff_sub4'   => $aff_sub4,
+    'ip'         => $user_ip,
+    'user_agent' => $_SERVER['HTTP_USER_AGENT']
 ];
 
-$url = $endpoint . '?' . http_build_query($data);
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // Real client UA
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-  'Authorization: Bearer 27968|4cQStKTIiTQ4BU8CrXbYOy7Qb41JFzDPJ92dz9bsfb47f1a2'
-));
+// 4. Execute cURL
+$ch = curl_init($endpoint . '?' . http_build_query($params));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$result = curl_exec($ch);
+curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer 27968|4cQStKTIiTQ4BU8CrXbYOy7Qb41JFzDPJ92dz9bsfb47f1a2'
+]);
+
+$response = curl_exec($ch);
 curl_close($ch);
 
-$result = json_decode($result);
-$offers = $result->offers ?? [];
+// 5. Decode and Output
+$data = json_decode($response, true);
+$offers = isset($data['offers']) ? $data['offers'] : [];
+
 echo json_encode($offers);
-?>
