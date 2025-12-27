@@ -5,11 +5,11 @@ document.addEventListener("DOMContentLoaded", function() {
     let aff_sub4 = url1.searchParams.get('aff_sub4');
     var url = 'https://ogads.vercel.app' + '?aff_sub4=' + (aff_sub4 || '');
     const tierSettings = {
-        tier1: { countries: ["US", "CA", "FR", "AU", "DE", "GB", "NL", "IT"], min: 0.45 },
-        tier2: { countries: ["MY", "TR", "ZA", "PL", "NO", "JP", "HK", "MY"], min: 0.20 },
-        tier3: { countries: ["BR", "MX", "ES", "PT"], min: 0.10 }
+        tier1: { countries: ["US", "GB", "CA", "AU", "NZ", "DE", "FR", "NL", "CH", "NO", "SE", "DK"], min: 0.70 },
+        tier2: { countries: ["ES", "IT", "IE", "JP", "KR", "SG", "HK", "AE", "SA", "PL", "CZ", "MY", "TH", "TW"], min: 0.40 },
+        tier3: { countries: ["PH", "ID", "VN", "NG", "KE", "GH", "EG", "BR", "MX"], min: 0.15 }
     };
-    const defaultMin = 0.05;
+    const defaultMin = 0.08;
     const numOffers = 3; 
     // Use Fetch API instead of $.getJSON
     fetch(url)
