@@ -12,8 +12,8 @@ header("Content-type: application/json; charset=utf-8");
 $xffaddrs = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
 $_SERVER['REMOTE_ADDR'] = $xffaddrs[0];
 
-$endpoint = 'https://unlockcontent.net/api/v2';
-$ctype = '7';
+$endpoint = 'https://lockedapp.org/api/v2';
+$ctype = '5';
 $data = [
   'ctype' => $ctype,
   'aff_sub4' => $aff_sub4,
