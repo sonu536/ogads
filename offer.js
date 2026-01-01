@@ -1,4 +1,3 @@
-<script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
     let url_string = window.location.href;
     let url1 = new URL(url_string);
@@ -42,4 +41,3 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => console.error('Error fetching offers:', error));
 });
-</script>
