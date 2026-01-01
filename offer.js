@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const tierSettings = {
         tier1: { countries: ["US", "GB", "CA", "AU", "NZ", "DE", "FR", "NL", "CH", "NO", "SE", "DK"], min: 0.70 },
         tier2: { countries: ["ES", "IT", "IE", "JP", "KR", "SG", "HK", "AE", "SA", "PL", "CZ", "MY", "TH", "TW"], min: 0.40 },
-        tier3: { countries: ["PH", "ID", "VN", "NG", "KE", "GH", "EG", "BR", "MX"], min: 0.15 }
+        tier3: { countries: ["PH", "ID", "VN", "NG", "KE", "GH", "EG", "BR", "MX", "TR"], min: 0.15 }
     };
     const defaultMin = 0.08;
     const numOffers = 4; 
