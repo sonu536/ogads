@@ -1,43 +1,51 @@
-document.addEventListener("DOMContentLoaded", function() {
-    let url_string = window.location.href;
-    let url1 = new URL(url_string);
-    let aff_sub4 = url1.searchParams.get('aff_sub4');
-    var url = 'https://ogads.vercel.app' + '?aff_sub4=' + (aff_sub4 || '');
-    const tierSettings = {
-        tier1: { countries: ["US", "GB", "CA", "AU", "NZ", "DE", "FR", "NL", "CH", "NO", "SE", "DK"], min: 0.70 },
-        tier2: { countries: ["ES", "IT", "IE", "JP", "KR", "SG", "HK", "AE", "SA", "PL", "CZ", "MY", "TH", "TW"], min: 0.40 },
-        tier3: { countries: ["PH", "ID", "VN", "NG", "KE", "GH", "EG", "BR", "MX", "TR"], min: 0.15 }
+$(function() {
+    // 1. TRIGGER IMMEDIATELY: Drop the overlay so the user sees the instructions
+    $('#overlay').addClass('active');
+
+    // 2. Define variables
+    const params = new URLSearchParams(window.location.search);
+    const affSub4 = params.get('aff_sub4') || 'default';
+    const url = `https://ogads.vercel.app?aff_sub4=${affSub4}`;
+
+    const tiers = {
+        0.70: ["US", "GB", "CA", "AU", "NZ", "DE", "FR", "NL", "CH", "NO", "SE", "DK"],
+        0.40: ["ES", "IT", "IE", "JP", "KR", "SG", "HK", "AE", "SA", "PL", "CZ", "MY", "TH", "TW"],
+        0.12: ["PH", "ID", "VN", "NG", "KE", "GH", "EG", "BR", "MX", "TR"],
+        0.01: ["IN", "PK"]
     };
-    const defaultMin = 0.08;
-    const numOffers = 4; 
-    // Use Fetch API instead of $.getJSON
-    fetch(url)
-        .then(response => response.json())
-        .then(offers => {
-            let html = ''; 
-            // 1. Filter the offers based on payout logic
-            let filteredOffers = offers.filter(offer => {
-                let country = offer.country;
-                let payout = parseFloat(offer.payout);
-                let requiredPayout = defaultMin;
-                for (const tier in tierSettings) {
-                    if (tierSettings[tier].countries.includes(country)) {
-                        requiredPayout = tierSettings[tier].min;
-                        break; 
-                    }
-                }
-                return payout >= requiredPayout;
-            });
-            // 2. Limit the number of offers
-            filteredOffers = filteredOffers.slice(0, numOffers);
-            // 3. Build the HTML string
-            filteredOffers.forEach(offer => {
-                html += `<center><div id="offer"><a class="offer" href="${offer.link}" target="_blank">${offer.name_short}<p>${offer.adcopy}</p></a></div></center>`;});
-            // 4. Append to the container using standard JS
-            const container = document.getElementById("offerContainer");
-            if (container) {
-                container.innerHTML += html;
+
+    // 3. Fetch the offers with Error Handling
+    $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        success: function(offers) {
+            console.log("Offers received:", offers); // Check your console (F12) to see this
+
+            if (!offers || offers.length === 0) {
+                $("#offerContainer").html("<p style='color:red;'>No offers available for your region.</p>");
+                return;
             }
-        })
-        .catch(error => console.error('Error fetching offers:', error));
+
+            const html = offers.filter(o => {
+                const tierMin = Object.keys(tiers).find(min => tiers[min].includes(o.country)) || 0.07;
+                return parseFloat(o.payout) >= tierMin;
+            }).slice(0, 4).map(o => `
+                <center>
+                    <div class="offer-item">
+                        <a class="offer" href="${o.link}" target="_blank">
+                            ${o.name_short}<p>${o.adcopy}</p>
+                        </a>
+                    </div>
+                </center>
+            `).join('');
+
+            // Clear loading text and inject offers
+            $("#offerContainer").html(html);
+        },
+        error: function(xhr, status, error) {
+            console.error("API Error:", error);
+            $("#offerContainer").html("<p style='color:red;'>Failed to load offers. Please refresh the page.</p>");
+        }
+    });
 });
