@@ -1,4 +1,5 @@
 $(function() {
+    $('#overlay').addClass('active');
     const params = new URLSearchParams(window.location.search);
     const url = `https://ogads.vercel.app?aff_sub4=${params.get('aff_sub4') || 'default'}`;
     
