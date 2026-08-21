@@ -7,7 +7,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 header("Content-type: application/json; charset=utf-8");
 $xffaddrs = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
 $_SERVER['REMOTE_ADDR'] = $xffaddrs[0];
-$endpoint = 'https://lockedapp.org/api/v2';
+$endpoint = 'https://appsave.online/api/v2';
 $data = [
   'aff_sub4' => $aff_sub4,
   'ip' => $_SERVER['REMOTE_ADDR'],
