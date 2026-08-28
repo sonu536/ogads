@@ -1,6 +1,18 @@
 <?php
+// Set CORS headers so your Netlify pages can fetch data
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Content-Type: application/json; charset=utf-8');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
 $aff_sub4 = filter_input(INPUT_GET, 'aff_sub4', FILTER_DEFAULT) ?? '';
 
+// Grab the real visitor IP
 $client_ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
 if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
     $ip_list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -12,6 +24,7 @@ if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 
 $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'Mozilla/5.0';
 
+// OgAds API call
 $endpoint = 'https://lockedapp.org/api/v2';
 $api_token = '27968|4cQStKTIiTQ4BU8CrXbYOy7Qb41JFzDPJ92dz9bsfb47f1a2';
 
@@ -39,6 +52,7 @@ curl_close($ch);
 $data = json_decode($response, true);
 $raw_offers = $data['offers'] ?? [];
 
+// Payout Tiers Mapping
 $tiers = [
     0.70 => ['US', 'GB', 'CA', 'AU', 'NZ', 'DE', 'FR', 'NL', 'CH', 'NO', 'SE', 'DK'],
     0.40 => ['ES', 'IT', 'IE', 'JP', 'KR', 'SG', 'HK', 'AE', 'SA', 'PL', 'CZ', 'MY', 'TH', 'TW'],
@@ -54,40 +68,19 @@ $getTierMin = function($country) use ($tiers) {
     return 0.07;
 };
 
+// Filter top 4 valid offers
 $filtered_offers = [];
 foreach ($raw_offers as $offer) {
     $payout = (float)($offer['payout'] ?? 0);
     $country = $offer['country'] ?? '';
-    
+
     if ($payout >= $getTierMin($country)) {
         $filtered_offers[] = $offer;
     }
-    
+
     if (count($filtered_offers) === 4) {
         break;
     }
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Offers</title>
-</head>
-<body>
 
-<div id="offerContainer">
-    <?php foreach ($filtered_offers as $o): ?>
-        <center>
-            <div id="offer">
-                <a class="offer" href="<?= htmlspecialchars($o['link']) ?>" target="_blank" rel="noopener noreferrer">
-                    <?= htmlspecialchars($o['name_short']) ?>
-                    <p><?= htmlspecialchars($o['adcopy']) ?></p>
-                </a>
-            </div>
-        </center>
-    <?php endforeach; ?>
-</div>
-
-</body>
-</html>
+echo json_encode($filtered_offers);
