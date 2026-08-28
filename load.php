@@ -54,7 +54,7 @@ $raw_offers = $data['offers'] ?? [];
 
 // Payout Tiers Mapping
 $tiers = [
-    0.70 => ['US', 'GB', 'CA', 'AU', 'NZ', 'DE', 'FR', 'NL', 'CH', 'NO', 'SE', 'DK'],
+    0.60 => ['US', 'GB', 'CA', 'AU', 'NZ', 'DE', 'FR', 'NL', 'CH', 'NO', 'SE', 'DK'],
     0.40 => ['ES', 'IT', 'IE', 'JP', 'KR', 'SG', 'HK', 'AE', 'SA', 'PL', 'CZ', 'MY', 'TH', 'TW'],
     0.12 => ['PH', 'ID', 'VN', 'NG', 'KE', 'GH', 'EG', 'BR', 'MX', 'TR'],
 ];
