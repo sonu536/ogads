@@ -1,5 +1,4 @@
 <?php
-// Set CORS headers so your Netlify pages can fetch data
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -52,29 +51,67 @@ curl_close($ch);
 $data = json_decode($response, true);
 $raw_offers = $data['offers'] ?? [];
 
-// Payout Tiers Mapping
+// 1. Detect visitor country from API metadata (OgAds usually returns `country_code` at root)
+$user_country = strtoupper(trim($data['country_code'] ?? $data['country'] ?? ''));
+
+// 2. Define Tiers
 $tiers = [
-    0.60 => ['US', 'GB', 'CA', 'AU', 'NZ', 'DE', 'FR', 'NL', 'CH', 'NO', 'SE', 'DK'],
-    0.40 => ['ES', 'IT', 'IE', 'JP', 'KR', 'SG', 'HK', 'AE', 'SA', 'PL', 'CZ', 'MY', 'TH', 'TW'],
-    0.12 => ['PH', 'ID', 'VN', 'NG', 'KE', 'GH', 'EG', 'BR', 'MX', 'TR'],
+    '0.70' => ['US', 'GB', 'CA', 'AU', 'NZ', 'DE', 'FR', 'NL', 'CH', 'NO', 'SE', 'DK'],
+    '0.40' => ['ES', 'IT', 'IE', 'JP', 'KR', 'SG', 'HK', 'AE', 'SA', 'PL', 'CZ', 'MY', 'TH', 'TW'],
+    '0.12' => ['PH', 'ID', 'VN', 'NG', 'KE', 'GH', 'EG', 'BR', 'MX', 'TR'],
 ];
 
-$getTierMin = function($country) use ($tiers) {
+// 3. Helper to determine the minimum payout threshold for any given country
+$getMinPayout = function($countryCode) use ($tiers) {
+    if (empty($countryCode)) return 0.07;
+    
     foreach ($tiers as $min => $countries) {
-        if (in_array(strtoupper($country), $countries, true)) {
+        if (in_array(strtoupper($countryCode), $countries, true)) {
             return (float)$min;
         }
     }
     return 0.07;
 };
 
-// Filter top 4 valid offers
+// 4. Determine baseline minimum for current visitor
+$visitor_min_payout = $getMinPayout($user_country);
+
+// 5. Filter offers
 $filtered_offers = [];
 foreach ($raw_offers as $offer) {
-    $payout = (float)($offer['payout'] ?? 0);
-    $country = $offer['country'] ?? '';
+    // Clean payout value (strip any currency signs if present)
+    $clean_payout_str = preg_replace('/[^0-9.]/', '', (string)($offer['payout'] ?? '0'));
+    $payout = (float)$clean_payout_str;
 
-    if ($payout >= $getTierMin($country)) {
+    // Resolve offer countries (handles array, comma-separated string, or single string)
+    $offer_countries = [];
+    if (isset($offer['country_code'])) {
+        $offer_countries = is_array($offer['country_code']) ? $offer['country_code'] : explode(',', $offer['country_code']);
+    } elseif (isset($offer['country'])) {
+        $offer_countries = is_array($offer['country']) ? $offer['country'] : explode(',', $offer['country']);
+    }
+
+    $offer_countries = array_filter(array_map('trim', array_map('strtoupper', $offer_countries)));
+
+    // Calculate effective minimum required
+    if (!empty($user_country)) {
+        // If we know the user's geo, use the visitor's tier
+        $min_required = $visitor_min_payout;
+    } elseif (!empty($offer_countries)) {
+        // If checking based on offer targets, find the highest tier matching any targeted country
+        $min_required = 0.07;
+        foreach ($offer_countries as $c) {
+            $c_min = $getMinPayout($c);
+            if ($c_min > $min_required) {
+                $min_required = $c_min;
+            }
+        }
+    } else {
+        $min_required = 0.07;
+    }
+
+    // Strict payout check (using round to prevent floating point inaccuracy e.g. 0.699999999)
+    if (round($payout, 2) >= round($min_required, 2)) {
         $filtered_offers[] = $offer;
     }
 
