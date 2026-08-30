@@ -10,6 +10,7 @@ $_SERVER['REMOTE_ADDR'] = $xffaddrs[0];
 $endpoint = 'https://lockedapp.org/api/v2';
 $data = [
   'aff_sub4' => $aff_sub4,
+  'ctype'      => 7,
   'ip' => $_SERVER['REMOTE_ADDR'],
   'user_agent' => $_SERVER['HTTP_USER_AGENT'] // PASS REAL UA - gets correct mobile/desktop offers
 ];
