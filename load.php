@@ -29,6 +29,7 @@ $api_token = '27968|4cQStKTIiTQ4BU8CrXbYOy7Qb41JFzDPJ92dz9bsfb47f1a2';
 
 $url = $endpoint . '?' . http_build_query([
     'aff_sub4'   => $aff_sub4,
+    'ctype'      => 7,                             
     'ip'         => $client_ip,
     'user_agent' => $user_agent,
 ]);
